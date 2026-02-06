@@ -1,0 +1,12 @@
+- name: Configure Linux
+  hosts: linux
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Set timezone
+      community.general.timezone:
+        name: "{{ timezone_name }}"
+
+  roles:
+    - apache
