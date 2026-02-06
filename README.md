@@ -16,9 +16,11 @@
     │ └ windows_setup.yml
     ├ roles/
     │ └ apache/
-    │ ├ defaults/
-    │ ├ tasks/
-    │ └ handlers/
+    │     ├ defaults/
+    │     ├ tasks/
+    ├ screenshots/
+    │ ├ linux/
+    │ └ windows/
 
 ------------------------------------------------------------------------
 
@@ -26,14 +28,16 @@
 
 ### linux_setup.yml
 
-Configure Linux target: - Gather facts - Install Apache - Start
-Apache - Set timezone
+Configure Linux target: - Gather facts - Install Apache (role apache) -
+Start Apache service - Set timezone
 
 ------------------------------------------------------------------------
 
 ### windows_setup.yml
 
-Configure Windows target: - Gather facts - Set timezone
+Configure Windows target: - Gather facts - Set timezone using
+ansible.windows.win_timezone - Verify timezone using PowerShell
+Get-TimeZone
 
 ------------------------------------------------------------------------
 
@@ -45,12 +49,24 @@ Configure Windows target: - Gather facts - Set timezone
     apache_pkg: apache2
     apache_service: apache2
 
+### group_vars/windows.yml
+
+    timezone_name: Romance Standard Time
+
 ------------------------------------------------------------------------
 
 ## Inventory Example
 
     [linux]
     linux1 ansible_host=192.X.X.X ansible_user=jathus ansible_become=true
+
+    [windows]
+    win1 ansible_host=192.X.X.X
+         ansible_user=jathus
+         ansible_password=*****
+         ansible_connection=winrm
+         ansible_winrm_transport=basic
+         ansible_winrm_server_cert_validation=ignore
 
 ------------------------------------------------------------------------
 
@@ -74,43 +90,54 @@ Configure Windows target: - Gather facts - Set timezone
 
 ------------------------------------------------------------------------
 
+### Run Windows playbook
+
+    ansible-playbook -i inventory/hosts.ini playbooks/windows_setup.yml
+
+------------------------------------------------------------------------
+
 ## Verification
 
-### Apache test
+### Apache test (Linux)
 
     curl http://192.X.X.X
 
 ------------------------------------------------------------------------
 
-### Timezone test
+### Linux timezone verification
 
     ansible linux -i inventory/hosts.ini -m command -a "timedatectl"
+
+------------------------------------------------------------------------
+
+### Windows timezone verification
+
+PowerShell on Windows VM:
+
+    Get-TimeZone
 
 ------------------------------------------------------------------------
 
 ## Status
 
 ✅ Linux automation working
-⬜ Windows automation in progress
+✅ Windows automation working
 
 ------------------------------------------------------------------------
 
 ## Screenshots
 
-Screenshots of the project execution can be found in the following folders:
+Screenshots of the project execution can be found in:
 
-- Linux screenshots → `screenshots/linux/`
-- Windows screenshots → `screenshots/windows/`
+-   Linux → screenshots/linux/
+-   Windows → screenshots/windows/
 
-These screenshots include:
-- Ansible ping results
-- Playbook execution results
-- Apache verification
-- Windows configuration (when completed)
-  
+Including: - Ansible ping results - Playbook execution results - Apache
+verification - Windows timezone verification
+
 ------------------------------------------------------------------------
 
 ## Author
 
-Jathushan SELVARAJAH  
-Efrei – DevOps / Ansible TP
+Jathushan SELVARAJAH
+EFREI -- DevOps / Ansible TP
